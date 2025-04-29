@@ -4,6 +4,7 @@ OBJ = \
 	src/main.o \
 	src/printer.o \
 	src/parser.o \
+	src/sorter.o \
 	
 FLAG = -Werror -Wextra -Wall
 
@@ -23,6 +24,6 @@ submodule:
 
 clean:
 	rm -f $(OBJ)
-	make -C ./42libft fclean
+	make -C ./src/42libft fclean
 
 .PHONY: clean submodule libft.a

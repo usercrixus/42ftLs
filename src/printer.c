@@ -23,16 +23,14 @@ static void manageRecursivity(char *dirName)
 
 static void basicPrint(struct dirent *de)
 {
+    if (!flags.a && de->d_name[0] == '.')
+        return;
     if (DT_DIR == de->d_type)
-    {
-        if (!flags.a && ft_strncmp(".", de->d_name, 2) != 0 && ft_strncmp("..", de->d_name, 3) != 0)
-            ft_printf("\033[34m%s\033[0m ", de->d_name);
-        else if (flags.a)
-            ft_printf("\033[34m%s\033[0m ", de->d_name);
-    }
+        ft_printf("\033[34m%s\033[0m  ", de->d_name);
     else if (DT_REG == de->d_type)
-        ft_printf("%s ", de->d_name);
+        ft_printf("%s  ", de->d_name);
 }
+
 
 static void longPrint()
 {
@@ -43,15 +41,21 @@ static int listDir(char *dirName)
     DIR *d = opendir(dirName);
     if (!d)
         return (0);
-    struct dirent *de;
+    direntList *list = getDirentList(d);
+    list = sortList(list, sortHelpInferior, dirName);
+    if (flags.t)
+        list = sortList(list, sortHelpTime, dirName);
+    if (flags.r)
+        list = reverseList(list);
     if (flags.R)
         ft_printf("%s:\n", dirName);
-    while ((de = readdir(d)) != NULL)
+    while (list)
     {
         if (flags.l)
-            longPrint();
+            longPrint(list->value);
         else
-            basicPrint(de);
+            basicPrint(list->value);
+        list = list->next;
     }
     ft_printf("\n");
     closedir(d);
