@@ -10,7 +10,7 @@ FLAG = -Werror -Wextra -Wall
 all: submodule libft.a ft_ls
 
 libft.a:
-	make -C ./42libft
+	make -C ./src/42libft
 
 ft_ls: $(OBJ)
 	gcc $(OBJ) -L./src/42libft/ft_printf -lftprintf -L./src/42libft/ft_base -lft $(FLAG) -o $@
