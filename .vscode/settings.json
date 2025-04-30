@@ -25,7 +25,9 @@
         "limits": "c",
         "memory": "c",
         "random": "c",
-        "vector": "c"
+        "vector": "c",
+        "parser.h": "c",
+        "printer.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

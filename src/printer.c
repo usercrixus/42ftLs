@@ -1,24 +1,23 @@
 #include "printer.h"
 
-static void manageRecursivity(char *dirName)
+static void manageRecursivity(direntList *buffer, char *dirName)
 {
-    DIR *d = opendir(dirName);
-    if (!d)
-        return;
-    struct dirent *de;
-    while ((de = readdir(d)) != NULL)
+    while (buffer != NULL)
     {
-        if (DT_DIR == de->d_type && ft_strncmp(".", de->d_name, 2) != 0 && ft_strncmp("..", de->d_name, 3) != 0)
+        if (DT_DIR == buffer->value->d_type 
+            && (flags.a || (!flags.a && buffer->value->d_name[0] != '.'))
+            && strncmp(buffer->value->d_name, ".", 2) != 0
+            && strncmp(buffer->value->d_name, "..", 3) != 0)
         {
             char *tmp = ft_strjoin(dirName, "/");
-            char *buff = ft_strjoin(tmp, de->d_name);
+            char *buff = ft_strjoin(tmp, buffer->value->d_name);
             free(tmp);
             ft_printf("\n");
             listDir(buff);
             free(buff);
         }
+        buffer = buffer->next;
     }
-    closedir(d);
 }
 
 static void basicPrint(struct dirent *de)
@@ -42,11 +41,12 @@ static int listDir(char *dirName)
     if (!d)
         return (0);
     direntList *list = getDirentList(d);
-    list = sortList(list, sortHelpInferior, dirName);
+    list = sortList(list, sortHelpInferior);
     if (flags.t)
-        list = sortList(list, sortHelpTime, dirName);
+        list = sortList(list, sortHelpTime);
     if (flags.r)
         list = reverseList(list);
+    direntList *buffer = list;
     if (flags.R)
         ft_printf("%s:\n", dirName);
     while (list)
@@ -58,9 +58,8 @@ static int listDir(char *dirName)
         list = list->next;
     }
     ft_printf("\n");
-    closedir(d);
     if (flags.R)
-        manageRecursivity(dirName);
+        manageRecursivity(buffer, dirName);
     return (1);
 }
 

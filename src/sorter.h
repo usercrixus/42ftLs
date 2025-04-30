@@ -17,11 +17,11 @@ typedef struct s_direntList
 } direntList;
 
 direntList *getDirentList(DIR *d);
-direntList *sortList(direntList *list, int (*f)(direntList *current, const char *dirName), const char *dirName);
+direntList *sortList(direntList *list, int (*f)(direntList *current));
 
-int sortHelpSuperior(direntList *current, const char *dirName);
-int sortHelpInferior(direntList *current, const char *dirName);
-int sortHelpTime(direntList *current, const char *dirName);
+int sortHelpSuperior(direntList *current);
+int sortHelpInferior(direntList *current);
+int sortHelpTime(direntList *current);
 direntList *reverseList(direntList *head);
 
 #endif

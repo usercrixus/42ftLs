@@ -14,7 +14,7 @@ static int	ft_stracasecmp(const char *s1, const char *s2)
     if (s2[0] == '.')
         s2++;
 	i = 0;
-	while (s1[i] == '\0' && s2[i] == '\0')
+	while (s1[i] != '\0' && s2[i] != '\0')
 	{
 		if (ft_tolower(s1[i]) != ft_tolower(s2[i]) || s1[i] == '\0' || s2[i] == '\0')
 			return ((unsigned char)ft_tolower(s1[i]) - (unsigned char)ft_tolower(s2[i]));
@@ -51,17 +51,17 @@ direntList *getDirentList(DIR *d)
 }
 
 
-int sortHelpSuperior(direntList *current, const char *dirName)
+int sortHelpSuperior(direntList *current)
 {
     return ft_stracasecmp(current->next->value->d_name, current->value->d_name) > 0;
 }
 
-int sortHelpInferior(direntList *current, const char *dirName)
+int sortHelpInferior(direntList *current)
 {
 	return ft_stracasecmp(current->next->value->d_name, current->value->d_name) < 0;
 }
 
-int sortHelpTime(direntList *current, const char *dirName)
+int sortHelpTime(direntList *current)
 {
     struct stat buf1;
     struct stat buf2;
@@ -87,7 +87,7 @@ void printlist(direntList *list)
     
 }
 
-direntList *sortList(direntList *list, int (*f)(direntList *current, const char *dirName), const char *dirName)
+direntList *sortList(direntList *list, int (*f)(direntList *))
 {
     int isSorted;
     direntList *current;
@@ -104,7 +104,7 @@ direntList *sortList(direntList *list, int (*f)(direntList *current, const char 
         current = list;
         while (current && current->next)
         {
-            if (f(current, dirName))
+            if (f(current))
             {
                 buffer = current->next;
                 current->next = buffer->next;
@@ -138,10 +138,10 @@ direntList *reverseList(direntList *head)
 
     while (cur)
     {
-        next     = cur->next;  // save next
-        cur->next = prev;      // reverse pointer
-        prev     = cur;        // advance prev
-        cur      = next;       // advance cur
+        next = cur->next;
+        cur->next = prev;
+        prev = cur; 
+        cur = next;
     }
     return prev;
 }
