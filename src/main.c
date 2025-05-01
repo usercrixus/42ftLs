@@ -1,5 +1,6 @@
 #include "printer.h"
 #include "parser.h"
+#include "printManager.h"
 
 int main(int argc, char **argv)
 {

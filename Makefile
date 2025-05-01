@@ -5,6 +5,8 @@ OBJ = \
 	src/printer.o \
 	src/parser.o \
 	src/sorter.o \
+	src/list.o \
+	src/printManager.o \
 	
 FLAG = -Werror -Wextra -Wall
 
@@ -24,6 +26,10 @@ submodule:
 
 clean:
 	rm -f $(OBJ)
+	make -C ./src/42libft clean
+
+fclean: clean
+	rm -f ft_ls
 	make -C ./src/42libft fclean
 
 .PHONY: clean submodule libft.a

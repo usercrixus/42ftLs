@@ -13,6 +13,9 @@ typedef struct flags
 } t_flags;
 
 extern t_flags flags;
+
+static void setFlags(char *s);
+
 void initFlags();
 void manageSetFlags(int argc, char **argv);
 

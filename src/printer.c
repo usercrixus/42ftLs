@@ -1,85 +1,112 @@
 #include "printer.h"
 
-static void manageRecursivity(direntList *buffer, char *dirName)
+static void printPermissions(struct stat *sb)
 {
-    while (buffer != NULL)
+    char perms[11] = "----------";
+
+    if (S_ISDIR(sb->st_mode))
+        perms[0] = 'd';
+    else if (S_ISLNK(sb->st_mode))
+        perms[0] = 'l';
+    else if (S_ISCHR(sb->st_mode))
+        perms[0] = 'c';
+    else if (S_ISBLK(sb->st_mode))
+        perms[0] = 'b';
+    else if (S_ISFIFO(sb->st_mode))
+        perms[0] = 'p';
+    else if (S_ISSOCK(sb->st_mode))
+        perms[0] = 's';
+    if (sb->st_mode & S_IRUSR)
+        perms[1] = 'r';
+    if (sb->st_mode & S_IWUSR)
+        perms[2] = 'w';
+    if (sb->st_mode & S_IXUSR)
+        perms[3] = 'x';
+    if (sb->st_mode & S_IRGRP)
+        perms[4] = 'r';
+    if (sb->st_mode & S_IWGRP)
+        perms[5] = 'w';
+    if (sb->st_mode & S_IXGRP)
+        perms[6] = 'x';
+    if (sb->st_mode & S_IROTH)
+        perms[7] = 'r';
+    if (sb->st_mode & S_IWOTH)
+        perms[8] = 'w';
+    if (sb->st_mode & S_IXOTH)
+        perms[9] = 'x';
+    ft_printf("%s ", perms);
+}
+
+static void printOwnerAndGroup(struct stat *sb)
+{
+    struct passwd *pw = getpwuid(sb->st_uid);
+    struct group *gr = getgrgid(sb->st_gid);
+    ft_printf("%s %s ", pw ? pw->pw_name : "?", gr ? gr->gr_name : "?");
+}
+
+static void printModificationTime(struct stat *sb)
+{
+    time_t t = sb->st_mtime;
+    char *ts = ctime(&t);
+    char *formated = ft_substr(ts, 4, 12);
+    ft_printf("%s ", formated);
+    free(formated);
+}
+
+static void printName(struct stat *sb, struct dirent *de, char *fullpath)
+{
+    ft_printf("%s", de->d_name);
+    if (S_ISLNK(sb->st_mode))
     {
-        if (DT_DIR == buffer->value->d_type 
-            && (flags.a || (!flags.a && buffer->value->d_name[0] != '.'))
-            && strncmp(buffer->value->d_name, ".", 2) != 0
-            && strncmp(buffer->value->d_name, "..", 3) != 0)
+        char target[PATH_MAX];
+        ssize_t len = readlink(fullpath, target, sizeof(target) - 1);
+        if (len > 0)
         {
-            char *tmp = ft_strjoin(dirName, "/");
-            char *buff = ft_strjoin(tmp, buffer->value->d_name);
-            free(tmp);
-            ft_printf("\n");
-            listDir(buff);
-            free(buff);
+            target[len] = '\0';
+            ft_printf(" -> %s", target);
         }
-        buffer = buffer->next;
     }
 }
 
-static void basicPrint(struct dirent *de)
+static void printSize(struct stat *sb)
 {
+    off_t offset = sb->st_size;
+    if (offset <= 0)
+        offset = 1;
+    while (offset < 9999999)
+    {
+        ft_printf(" ");
+        offset *= 10;
+    }
+    ft_printf("%d ", (long long)sb->st_size);
+}
+
+int print(char *parent, struct dirent *de)
+{
+    struct stat sb;
+    char *fullpath;
+    char *buffer;
+
     if (!flags.a && de->d_name[0] == '.')
-        return;
-    if (DT_DIR == de->d_type)
-        ft_printf("\033[34m%s\033[0m  ", de->d_name);
-    else if (DT_REG == de->d_type)
-        ft_printf("%s  ", de->d_name);
-}
-
-
-static void longPrint()
-{
-}
-
-static int listDir(char *dirName)
-{
-    DIR *d = opendir(dirName);
-    if (!d)
         return (0);
-    direntList *list = getDirentList(d);
-    list = sortList(list, sortHelpInferior);
-    if (flags.t)
-        list = sortList(list, sortHelpTime);
-    if (flags.r)
-        list = reverseList(list);
-    direntList *buffer = list;
-    if (flags.R)
-        ft_printf("%s:\n", dirName);
-    while (list)
+    if (!flags.l)
+        ft_printf("%s  ", de->d_name);
+    else
     {
-        if (flags.l)
-            longPrint(list->value);
-        else
-            basicPrint(list->value);
-        list = list->next;
+        buffer = NULL;
+        buffer = ft_strjoin(parent, "/");
+        fullpath = ft_strjoin(buffer, de->d_name);
+        free(buffer);
+        if (lstat(fullpath, &sb) == -1)
+            return (perror("lstat"), 0);
+        printPermissions(&sb);
+        ft_printf("%u ", (unsigned long)sb.st_nlink);
+        printOwnerAndGroup(&sb);
+        printSize(&sb);
+        printModificationTime(&sb);
+        printName(&sb, de, fullpath);
+        free(fullpath);
+        ft_printf("\n");
     }
-    ft_printf("\n");
-    if (flags.R)
-        manageRecursivity(buffer, dirName);
     return (1);
-}
-
-void manageListDir(int argc, char **argv)
-{
-    int i;
-    int isPrinted;
-
-    isPrinted = 0;
-    i = 1;
-    while (i < argc)
-    {
-        if (argv[i][0] != '-')
-        {
-            if (!listDir(argv[i]))
-                ft_printf("ls: cannot access '%s': No such file or directory", argv[i]);
-            isPrinted = 1;
-        }
-        i++;
-    }
-    if (!isPrinted && !listDir("."))
-        ft_printf("ls: cannot access '.': No such file or directory");
 }

@@ -1,4 +1,7 @@
 {
+    "files.exclude": {
+        "**/*.o": true
+    },
     "files.associations": {
         "ft_printf.h": "c",
         "dirent.h": "c",
@@ -27,7 +30,8 @@
         "random": "c",
         "vector": "c",
         "parser.h": "c",
-        "printer.h": "c"
+        "printer.h": "c",
+        "printmanager.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

@@ -1,93 +1,62 @@
 #include "sorter.h"
 
-
-static int	ft_stracasecmp(const char *s1, const char *s2)
+static char *correctedSortName(char *name)
 {
-	size_t	i;
-
-    if (s1[0] == '.')
-        s1++;
-    if (s1[0] == '.')
-        s1++; 
-    if (s2[0] == '.')
-        s2++;
-    if (s2[0] == '.')
-        s2++;
-	i = 0;
-	while (s1[i] != '\0' && s2[i] != '\0')
-	{
-		if (ft_tolower(s1[i]) != ft_tolower(s2[i]) || s1[i] == '\0' || s2[i] == '\0')
-			return ((unsigned char)ft_tolower(s1[i]) - (unsigned char)ft_tolower(s2[i]));
-		i++;
-	}
-    return ((unsigned char)ft_tolower(s1[i]) - (unsigned char)ft_tolower(s2[i]));
-}
-
-direntList *getDirentList(DIR *d)
-{
-    direntList *list = NULL;
-    direntList *last = NULL;
-    direntList *buffer;
-    struct dirent *de;
-
-    while ((de = readdir(d)) != NULL)
+    if (ft_strncmp(name, ".", 2) != 0 && ft_strncmp(name, "..", 3) != 0)
     {
-        buffer = malloc(sizeof(direntList));
-        if (!buffer)
-            return NULL; // handle error properly
-        buffer->value = malloc(sizeof(struct dirent));
-        if (!buffer->value)
-            return NULL; // handle error properly
-        ft_memcpy(buffer->value, de, sizeof(struct dirent));
-        buffer->next = NULL;
-
-        if (!list)
-            list = buffer;
-        else
-            last->next = buffer;
-        last = buffer;
+        if (name[0] == '.')
+            name++;
+        if (name[0] == '.')
+            name++; 
     }
-    return list;
+    return (name);
 }
 
-
-int sortHelpSuperior(direntList *current)
+int sortHelpSuperior(direntList *current, char *dirName)
 {
-    return ft_stracasecmp(current->next->value->d_name, current->value->d_name) > 0;
+    return ft_stracasecmp(correctedSortName(current->next->value->d_name), correctedSortName(current->value->d_name)) > 0;
 }
 
-int sortHelpInferior(direntList *current)
+int sortHelpInferior(direntList *current, char *dirName)
 {
-	return ft_stracasecmp(current->next->value->d_name, current->value->d_name) < 0;
+	return ft_stracasecmp(correctedSortName(current->next->value->d_name), correctedSortName(current->value->d_name)) < 0;
 }
 
-int sortHelpTime(direntList *current)
+int sortHelpTime(direntList *current, char *dirName)
 {
     struct stat buf1;
     struct stat buf2;
+    char* path;
+    char* pathBuffer;
 
-    if (lstat(current->value->d_name, &buf1) == -1)
+    pathBuffer = ft_strjoin(dirName, "/");
+    path = ft_strjoin(pathBuffer, current->value->d_name);
+    if (lstat(path, &buf1) == -1)
         return 0;
-    if (lstat(current->next->value->d_name, &buf2) == -1)
+    free(pathBuffer);
+    free(path);
+    pathBuffer = ft_strjoin(dirName, "/");
+    path = ft_strjoin(pathBuffer, current->next->value->d_name);
+    if (lstat(path, &buf2) == -1)
         return 0;
+    free(pathBuffer);
+    free(path);    
     if (buf1.st_mtime == buf2.st_mtime)
-        return ft_stracasecmp(current->next->value->d_name, current->value->d_name) < 0;
+        return ft_stracasecmp(correctedSortName(current->next->value->d_name), correctedSortName(current->value->d_name)) < 0;
     return buf1.st_mtime < buf2.st_mtime;
 }
 
 void printlist(direntList *list)
 {
-    direntList *buffer = list;
-
-    while (buffer)
+    while (list)
     {
-        ft_printf("%s\n", buffer->value->d_name);
-        buffer = buffer->next;
+        printf(" %s ", list->value->d_name);
+        list = list->next;
     }
-    
+    printf("end\n");
 }
 
-direntList *sortList(direntList *list, int (*f)(direntList *))
+direntList *sortList(direntList *list, int (*f)(direntList *, char *), char *dirName)
 {
     int isSorted;
     direntList *current;
@@ -104,7 +73,7 @@ direntList *sortList(direntList *list, int (*f)(direntList *))
         current = list;
         while (current && current->next)
         {
-            if (f(current))
+            if (f(current, dirName))
             {
                 buffer = current->next;
                 current->next = buffer->next;
@@ -128,7 +97,6 @@ direntList *sortList(direntList *list, int (*f)(direntList *))
     }
     return list;
 }
-
 
 direntList *reverseList(direntList *head)
 {
