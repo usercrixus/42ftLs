@@ -6,8 +6,6 @@ static char *correctedSortName(char *name)
     {
         if (name[0] == '.')
             name++;
-        if (name[0] == '.')
-            name++; 
     }
     return (name);
 }
@@ -41,9 +39,14 @@ int sortHelpTime(direntList *current, char *dirName)
         return 0;
     free(pathBuffer);
     free(path);    
-    if (buf1.st_mtime == buf2.st_mtime)
-        return ft_stracasecmp(correctedSortName(current->next->value->d_name), correctedSortName(current->value->d_name)) < 0;
+    if (buf1.st_mtime == buf2.st_mtime) {
+        if (buf1.st_mtim.tv_nsec == buf2.st_mtim.tv_nsec) {
+            return ft_stracasecmp(correctedSortName(current->value->d_name), correctedSortName(current->next->value->d_name)) > 0;
+        }
+        return buf1.st_mtim.tv_nsec < buf2.st_mtim.tv_nsec;
+    }
     return buf1.st_mtime < buf2.st_mtime;
+    
 }
 
 void printlist(direntList *list)
