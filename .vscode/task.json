@@ -1,0 +1,16 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Check Unused Includes (IWYU)",
+        "type": "shell",
+        "command": "include-what-you-use",
+        "args": [
+          "-I.",
+          "-std=c11",
+          "${file}"
+        ],
+        "problemMatcher": []
+      }
+    ]
+  }

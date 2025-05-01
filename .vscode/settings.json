@@ -33,5 +33,9 @@
         "printer.h": "c",
         "printmanager.h": "c"
     },
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.path": "/usr/bin/clang-tidy",     // adjust path if needed
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json"  // optional, preferred
 }

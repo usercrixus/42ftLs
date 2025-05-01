@@ -49,16 +49,6 @@ int sortHelpTime(direntList *current, char *dirName)
     
 }
 
-void printlist(direntList *list)
-{
-    while (list)
-    {
-        printf(" %s ", list->value->d_name);
-        list = list->next;
-    }
-    printf("end\n");
-}
-
 direntList *sortList(direntList *list, int (*f)(direntList *, char *), char *dirName)
 {
     int isSorted;

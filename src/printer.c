@@ -98,7 +98,7 @@ int print(char *parent, struct dirent *de)
         fullpath = ft_strjoin(buffer, de->d_name);
         free(buffer);
         if (lstat(fullpath, &sb) == -1)
-            return (perror("lstat"), 0);
+            return (0);
         printPermissions(&sb);
         ft_printf("%u ", (unsigned long)sb.st_nlink);
         printOwnerAndGroup(&sb);
