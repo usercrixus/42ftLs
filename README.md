@@ -1,5 +1,3 @@
-✅ Generated README.md for ft_ls:
-
 # ft_ls
 
 `ft_ls` is a custom reimplementation of the Unix `ls` command in C. It lists directory contents and supports several common flags. This project is modular and relies on a custom `libft` library.
