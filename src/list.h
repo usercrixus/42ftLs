@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include "42libft/ft_base/libft.h"
 #include "parser.h"
+#include "42libft/ft_str/ft_str.h"
 
 typedef struct s_direntList
 {

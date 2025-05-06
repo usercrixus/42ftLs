@@ -5,6 +5,7 @@
 #include "./42libft/ft_base/libft.h"
 #include "parser.h"
 #include "list.h"
+#include "42libft/ft_str/ft_str.h"
 
 extern t_flags flags;
 

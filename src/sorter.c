@@ -24,21 +24,22 @@ int sortHelpTime(direntList *current, char *dirName)
 {
     struct stat buf1;
     struct stat buf2;
-    char* path;
-    char* pathBuffer;
+    char* bufferPath;
+    t_str *path;
 
-    pathBuffer = ft_strjoin(dirName, "/");
-    path = ft_strjoin(pathBuffer, current->value->d_name);
-    if (lstat(path, &buf1) == -1)
+    path = ft_str_create();
+    ft_str_multiple_push(path, 3, dirName, "/", current->value->d_name);
+    bufferPath = ft_str_get_char_array(path, path->size);
+    if (lstat(bufferPath, &buf1) == -1)
         return 0;
-    free(pathBuffer);
-    free(path);
-    pathBuffer = ft_strjoin(dirName, "/");
-    path = ft_strjoin(pathBuffer, current->next->value->d_name);
-    if (lstat(path, &buf2) == -1)
+    free(bufferPath);
+    ft_str_troncate_begin(path, path->size);
+    ft_str_multiple_push(path, 3, dirName, "/", current->next->value->d_name);
+    bufferPath = ft_str_get_char_array(path, path->size);
+    if (lstat(bufferPath, &buf2) == -1)
         return 0;
-    free(pathBuffer);
-    free(path);    
+    free(bufferPath);
+    ft_str_free(path);    
     if (buf1.st_mtime == buf2.st_mtime) {
         if (buf1.st_mtim.tv_nsec == buf2.st_mtim.tv_nsec) {
             return ft_stracasecmp(correctedSortName(current->value->d_name), correctedSortName(current->next->value->d_name)) > 0;

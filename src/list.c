@@ -4,21 +4,22 @@ static int getTotalBlocks(direntList *list, char *dirname)
 {
     int totalBlocks = 0;
     struct stat st;
-    char *path;
     char *bufferPath;
-
+    t_str *path;
+    
     while (list)
     {
         if (flags.a || (!flags.a && list->value->d_name[0] != '.'))
         {
-            bufferPath = ft_strjoin(dirname, "/");
-            path = ft_strjoin(bufferPath, list->value->d_name);
-			free(bufferPath);
-			if (lstat(path, &st) == 0)
+            path = ft_str_create();
+            ft_str_multiple_push(path, 3, dirname, "/", list->value->d_name);
+            bufferPath = ft_str_get_char_array(path, path->size);
+			if (lstat(bufferPath, &st) == 0)
 			{
 				totalBlocks += st.st_blocks;
 			}
-			free(path);
+			free(bufferPath);
+            ft_str_free(path);
 			list = list->next;
 		}
 		else

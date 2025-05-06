@@ -16,7 +16,7 @@ libft.a:
 	make -C ./src/42libft
 
 ft_ls: $(OBJ)
-	gcc $(OBJ) -L./src/42libft/ft_printf -lftprintf -L./src/42libft/ft_base -lft $(FLAG) -o $@
+	gcc $(OBJ) -L./src/42libft/ft_printf -lftprintf -L./src/42libft/ft_base -lft -L./src/42libft/ft_str -lftstr $(FLAG) -o $@
 
 %.o: %.c
 	gcc -c $< -o $@

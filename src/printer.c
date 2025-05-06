@@ -84,8 +84,8 @@ static void printSize(struct stat *sb)
 int print(char *parent, struct dirent *de)
 {
     struct stat sb;
-    char *fullpath;
-    char *buffer;
+    char *bufferPath;
+    t_str *path;
 
     if (!flags.a && de->d_name[0] == '.')
         return (0);
@@ -93,19 +93,19 @@ int print(char *parent, struct dirent *de)
         ft_printf("%s  ", de->d_name);
     else
     {
-        buffer = NULL;
-        buffer = ft_strjoin(parent, "/");
-        fullpath = ft_strjoin(buffer, de->d_name);
-        free(buffer);
-        if (lstat(fullpath, &sb) == -1)
+        path = ft_str_create();
+        ft_str_multiple_push(path, 3, parent, "/", de->d_name);
+        bufferPath = ft_str_get_char_array(path, path->size);
+        if (lstat(bufferPath, &sb) == -1)
             return (0);
         printPermissions(&sb);
         ft_printf("%u ", (unsigned long)sb.st_nlink);
         printOwnerAndGroup(&sb);
         printSize(&sb);
         printModificationTime(&sb);
-        printName(&sb, de, fullpath);
-        free(fullpath);
+        printName(&sb, de, bufferPath);
+        free(bufferPath);
+        ft_str_free(path);
         ft_printf("\n");
     }
     return (1);
