@@ -1,5 +1,4 @@
-#ifndef LIST
-#define LIST
+#pragma once
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -13,10 +12,7 @@ typedef struct s_direntList
 	struct s_direntList *next;
 } direntList;
 
-static int getTotalBlocks(direntList *list, char *dirname);
 
 int getTotalBlockManager(char *dirName);
 void destroyList(direntList *list);
 direntList *getDirentList(DIR *d);
-
-#endif

@@ -12,11 +12,13 @@ static char *correctedSortName(char *name)
 
 int sortHelpSuperior(direntList *current, char *dirName)
 {
+    (void) dirName;
     return ft_stracasecmp(correctedSortName(current->next->value->d_name), correctedSortName(current->value->d_name)) > 0;
 }
 
 int sortHelpInferior(direntList *current, char *dirName)
 {
+    (void) dirName;
 	return ft_stracasecmp(correctedSortName(current->next->value->d_name), correctedSortName(current->value->d_name)) < 0;
 }
 

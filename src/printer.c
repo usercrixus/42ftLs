@@ -1,6 +1,6 @@
 #include "printer.h"
 
-static void printPermissions(struct stat *sb)
+void printPermissions(struct stat *sb)
 {
     char perms[11] = "----------";
 
@@ -37,14 +37,14 @@ static void printPermissions(struct stat *sb)
     ft_printf("%s ", perms);
 }
 
-static void printOwnerAndGroup(struct stat *sb)
+void printOwnerAndGroup(struct stat *sb)
 {
     struct passwd *pw = getpwuid(sb->st_uid);
     struct group *gr = getgrgid(sb->st_gid);
     ft_printf("%s %s ", pw ? pw->pw_name : "?", gr ? gr->gr_name : "?");
 }
 
-static void printModificationTime(struct stat *sb)
+void printModificationTime(struct stat *sb)
 {
     time_t t = sb->st_mtime;
     char *ts = ctime(&t);
@@ -53,7 +53,7 @@ static void printModificationTime(struct stat *sb)
     free(formated);
 }
 
-static void printName(struct stat *sb, struct dirent *de, char *fullpath)
+void printName(struct stat *sb, struct dirent *de, char *fullpath)
 {
     ft_printf("%s", de->d_name);
     if (S_ISLNK(sb->st_mode))
@@ -68,7 +68,7 @@ static void printName(struct stat *sb, struct dirent *de, char *fullpath)
     }
 }
 
-static void printSize(struct stat *sb)
+void printSize(struct stat *sb)
 {
     off_t offset = sb->st_size;
     if (offset <= 0)

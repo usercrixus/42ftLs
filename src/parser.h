@@ -1,5 +1,4 @@
-#ifndef PARSER
-#define PARSER
+#pragma once
 
 #include "42libft/ft_base/libft.h"
 
@@ -14,9 +13,5 @@ typedef struct flags
 
 extern t_flags flags;
 
-static void setFlags(char *s);
-
 void initFlags();
 void manageSetFlags(int argc, char **argv);
-
-#endif

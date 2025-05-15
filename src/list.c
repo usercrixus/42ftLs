@@ -1,6 +1,6 @@
 #include "list.h"
 
-static int getTotalBlocks(direntList *list, char *dirname)
+int getTotalBlocks(direntList *list, char *dirname)
 {
     int totalBlocks = 0;
     struct stat st;

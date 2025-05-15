@@ -16,10 +16,10 @@ libft.a:
 	make -C ./src/42libft
 
 ft_ls: $(OBJ)
-	gcc $(OBJ) -L./src/42libft/ft_printf -lftprintf -L./src/42libft/ft_base -lft -L./src/42libft/ft_str -lftstr $(FLAG) -o $@
+	gcc $(FLAG) $(OBJ) -L./src/42libft/ft_printf -lftprintf -L./src/42libft/ft_base -lft -L./src/42libft/ft_str -lftstr -o $@
 
 %.o: %.c
-	gcc -c $< -o $@
+	gcc $(FLAG) -c $< -o $@
 
 submodule:
 	git submodule update --init --recursive
@@ -32,4 +32,4 @@ fclean: clean
 	rm -f ft_ls
 	make -C ./src/42libft fclean
 
-.PHONY: clean submodule libft.a
+.PHONY: fclean clean submodule libft.a

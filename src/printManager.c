@@ -1,28 +1,6 @@
 #include "printManager.h"
 
-static void manageRecursivity(direntList *buffer, char *dirName)
-{
-    char *tmp;
-    char *buff;
-
-    while (buffer != NULL)
-    {
-        if (DT_DIR == buffer->value->d_type
-            && (flags.a || (!flags.a && buffer->value->d_name[0] != '.'))
-            && ft_strncmp(buffer->value->d_name, ".", 2) != 0 && ft_strncmp(buffer->value->d_name, "..", 3) != 0)
-        {
-            tmp = ft_strjoin(dirName, "/");
-            buff = ft_strjoin(tmp, buffer->value->d_name);
-            free(tmp);
-            ft_printf("\n");
-            listDir(buff);
-            free(buff);
-        }
-        buffer = buffer->next;
-    }
-}
-
-static direntList *formatList(direntList *list, char *dirName)
+direntList *formatList(direntList *list, char *dirName)
 {
     list = sortList(list, sortHelpInferior, dirName);
     if (flags.t)
@@ -32,7 +10,7 @@ static direntList *formatList(direntList *list, char *dirName)
     return list;
 }
 
-static int listDir(char *dirName)
+int listDir(char *dirName)
 {
     DIR *d;
     direntList *buffer;
@@ -71,12 +49,32 @@ static int listDir(char *dirName)
     return (1);
 }
 
+void manageRecursivity(direntList *buffer, char *dirName)
+{
+    char *tmp;
+    char *buff;
+
+    while (buffer != NULL)
+    {
+        if (DT_DIR == buffer->value->d_type
+            && (flags.a || (!flags.a && buffer->value->d_name[0] != '.'))
+            && ft_strncmp(buffer->value->d_name, ".", 2) != 0 && ft_strncmp(buffer->value->d_name, "..", 3) != 0)
+        {
+            tmp = ft_strjoin(dirName, "/");
+            buff = ft_strjoin(tmp, buffer->value->d_name);
+            free(tmp);
+            ft_printf("\n");
+            listDir(buff);
+            free(buff);
+        }
+        buffer = buffer->next;
+    }
+}
 
 void manageListDir(int argc, char **argv)
 {
     int i;
     int isPrinted;
-    DIR *d;
     char *cleanName;
 
     isPrinted = 0;
