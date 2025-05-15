@@ -10,7 +10,7 @@ OBJ = \
 	
 FLAG = -Werror -Wextra -Wall
 
-all: submodule libft.a ft_ls
+all: libft.a ft_ls
 
 libft.a:
 	make -C ./src/42libft
@@ -31,5 +31,7 @@ clean:
 fclean: clean
 	rm -f ft_ls
 	make -C ./src/42libft fclean
+
+re: fclean all
 
 .PHONY: fclean clean submodule libft.a
